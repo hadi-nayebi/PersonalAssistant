@@ -6,7 +6,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const pdfData = req.body.pdfData;
     const buffer = Buffer.from(pdfData, 'base64');
-    const filePath = path.join(process.cwd(), 'docs', 'chat_history.pdf');
+    const filePath = path.join(process.cwd(), 'docs_sm', 'chat_history.pdf');
 
     fs.writeFile(filePath, buffer, (err) => {
       if (err) {
