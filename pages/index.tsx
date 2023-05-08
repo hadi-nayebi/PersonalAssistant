@@ -12,6 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { saveChatHistory } from '@/utils/saveChatHistory';
 
 export default function Home() {
   const [query, setQuery] = useState<string>('');
@@ -119,6 +120,9 @@ export default function Home() {
       e.preventDefault();
     }
   };
+
+  // Save chat history to a PDF file
+  saveChatHistory(messageState.messages);
 
   return (
     <>
