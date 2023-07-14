@@ -38,6 +38,22 @@ export default function Home() {
   const messageListRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
+  // define the set for references of messages to become visable
+  const [visibleRefs, setVisibleRefs] = useState(new Set<number>());
+
+  const toggleRefsVisibility = (index: number) => {
+    setVisibleRefs(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
+
+
   useEffect(() => {
     textAreaRef.current?.focus();
   }, []);
@@ -129,7 +145,7 @@ export default function Home() {
       <Layout>
         <div className="mx-auto flex flex-col gap-4">
           <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
-            Chat With Your Personal Assistant
+            Chat With Your Personal Assistant 🤖
           </h1>
           <main className={styles.main}>
             <div className={styles.cloud}>
@@ -183,29 +199,34 @@ export default function Home() {
                           className="p-5"
                           key={`sourceDocsAccordion-${index}`}
                         >
-                          <Accordion
-                            type="single"
-                            collapsible
-                            className="flex-col"
-                          >
-                            {message.sourceDocs.map((doc, index) => (
-                              <div key={`messageSourceDocs-${index}`}>
-                                <AccordionItem value={`item-${index}`}>
-                                  <AccordionTrigger>
-                                    <h3>Source {index + 1}</h3>
-                                  </AccordionTrigger>
-                                  <AccordionContent>
-                                    <ReactMarkdown linkTarget="_blank">
-                                      {doc.pageContent}
-                                    </ReactMarkdown>
-                                    <p className="mt-2">
-                                      <b>Source:</b> {doc.metadata.source}
-                                    </p>
-                                  </AccordionContent>
-                                </AccordionItem>
-                              </div>
-                            ))}
-                          </Accordion>
+                          <button onClick={() => toggleRefsVisibility(index)}>
+                            {visibleRefs.has(index) ? 'Hide References' : 'Show References'}
+                          </button>
+                          {visibleRefs.has(index) && (
+                            <Accordion
+                              type="single"
+                              collapsible
+                              className="flex-col"
+                            >
+                              {message.sourceDocs.map((doc, docIndex) => (
+                                <div key={`messageSourceDocs-${docIndex}`}>
+                                  <AccordionItem value={`item-${docIndex}`}>
+                                    <AccordionTrigger>
+                                      <h3>Source {docIndex + 1}</h3>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                      <ReactMarkdown linkTarget="_blank">
+                                        {doc.pageContent}
+                                      </ReactMarkdown>
+                                      <p className="mt-2">
+                                        <b>Source:</b> {doc.metadata.source}
+                                      </p>
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                </div>
+                              ))}
+                            </Accordion>
+                          )}
                         </div>
                       )}
                     </>
