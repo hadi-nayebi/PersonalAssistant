@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf';
 import { Message } from '@/types/chat';
 
-export const saveChatHistory = (messages: Message[]) => {
+export const saveChatHistory = (messages: Message[], sessionTimestamp: number) => {
     const pdf = new jsPDF();
     let yPos = 20;
 
@@ -15,17 +15,24 @@ export const saveChatHistory = (messages: Message[]) => {
 
     const base64PDF = pdf.output('datauristring').split(',')[1];
 
+    // fetch('/api/save_pdf', {
+    // method: 'POST',
+    // headers: {
+    //     'Content-Type': 'application/json',
+    // },
+    // body: JSON.stringify({ pdfData: base64PDF }),
+    // })
     fetch('/api/save_pdf', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ pdfData: base64PDF }),
-    })
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pdfData: base64PDF, sessionTimestamp: sessionTimestamp }),
+      })
     .then((response) => response.json())
-    .then((data) => {
-        console.log(data.message);
-    })
+    // .then((data) => {
+    //     console.log(data.message);
+    // })
     .catch((error) => {
         console.error('Error:', error);
     });

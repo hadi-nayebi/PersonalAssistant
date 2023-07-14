@@ -53,6 +53,8 @@ export default function Home() {
     });
   };
 
+  // timestamp for chat history
+  const [sessionTimestamp, setSessionTimestamp] = useState<number>(Date.now());
 
   useEffect(() => {
     textAreaRef.current?.focus();
@@ -138,7 +140,32 @@ export default function Home() {
   };
 
   // Save chat history to a PDF file
-  saveChatHistory(messageState.messages);
+  // saveChatHistory(messageState.messages);
+
+  // clear messages and history function to reset
+  const clearMessages = () => {
+    setMessageState({
+      messages: [{
+        message: 'Hi, How can I help you?',
+        type: 'apiMessage',
+      }],
+      history: [],
+    });
+    setSessionTimestamp(Date.now());
+  };
+
+  // Save chat history in a regular interval
+  // In your Home component
+  useEffect(() => {
+    // This will save the chat history every 5 minutes (5000 ms)
+    const intervalId = setInterval(() => {
+      saveChatHistory(messageState.messages, sessionTimestamp);
+    }, 5000);
+
+    // This will clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, [messageState, sessionTimestamp]);
+
 
   return (
     <>
@@ -147,6 +174,20 @@ export default function Home() {
           <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
             Chat With Your Personal Assistant 🤖
           </h1>
+          <div className={styles['chat-controls']}>
+            <button className={styles['save-chat']}
+              type="button"
+              onClick={() => saveChatHistory(messageState.messages, sessionTimestamp)}
+            >
+              Save Chat History
+            </button>
+            <button className={styles['clear-chat']}
+              type="button"
+              onClick={() => clearMessages()}
+            >
+              Clear Chat
+            </button>
+          </div>
           <main className={styles.main}>
             <div className={styles.cloud}>
               <div ref={messageListRef} className={styles.messagelist}>

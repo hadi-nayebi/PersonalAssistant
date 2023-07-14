@@ -4,9 +4,11 @@ import path from 'path';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
-    const pdfData = req.body.pdfData;
+    const { pdfData, sessionTimestamp } = req.body;
     const buffer = Buffer.from(pdfData, 'base64');
-    const filePath = path.join(process.cwd(), 'docs_sm', 'chat_history.pdf');
+    // define a file name for chat history: chat_history_<timestamp>.pdf
+    const fileName = `chat_history_${sessionTimestamp}.pdf`;
+    const filePath = path.join(process.cwd(), 'memory', 'docs_lm', fileName);
 
     fs.writeFile(filePath, buffer, (err) => {
       if (err) {
