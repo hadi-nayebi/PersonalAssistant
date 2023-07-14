@@ -1,6 +1,8 @@
 import { jsPDF } from 'jspdf';
 import { Message } from '@/types/chat';
 
+
+
 export const saveChatHistory = (messages: Message[], sessionTimestamp: number) => {
     const pdf = new jsPDF();
     let yPos = 20;
@@ -15,13 +17,6 @@ export const saveChatHistory = (messages: Message[], sessionTimestamp: number) =
 
     const base64PDF = pdf.output('datauristring').split(',')[1];
 
-    // fetch('/api/save_pdf', {
-    // method: 'POST',
-    // headers: {
-    //     'Content-Type': 'application/json',
-    // },
-    // body: JSON.stringify({ pdfData: base64PDF }),
-    // })
     fetch('/api/save_pdf', {
         method: 'POST',
         headers: {
